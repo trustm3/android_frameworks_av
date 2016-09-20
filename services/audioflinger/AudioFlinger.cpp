@@ -977,6 +977,11 @@ status_t AudioFlinger::checkStreamType(audio_stream_type_t stream) const
         return BAD_VALUE;
     }
     pid_t caller = IPCThreadState::self()->getCallingPid();
+
+    // We got called from other containers Audio Service
+    if (caller == 0)
+        return NO_ERROR;
+
     if (uint32_t(stream) >= AUDIO_STREAM_PUBLIC_CNT && caller != getpid_cached) {
         ALOGW("setStreamVolume() pid %d cannot use internal stream type %d", caller, stream);
         return PERMISSION_DENIED;
